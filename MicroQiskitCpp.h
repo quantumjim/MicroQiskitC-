@@ -18,6 +18,7 @@ https://github.com/quantumjim/MicroQiskit/blob/master/microqiskit.py
 using namespace std;
 
 const int n_qubits_max = 20; // limit on qubit number
+// TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
 
 class QuantumCircuit {
 
@@ -152,9 +153,7 @@ class Simulator {
           }
         }
 
-      }
-
-      if (qc.data[g][0]=="cx") {
+      } else if (qc.data[g][0]=="cx") {
         int s,t,l,h;
         s = stoi( qc.data[g][qc.data[g].size()-2] );
         t = stoi( qc.data[g][qc.data[g].size()-1] );
