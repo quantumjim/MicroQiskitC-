@@ -1,7 +1,15 @@
+/*
+Comments in this file are mostly there to point out differences with the Python version of MicroQiskit, or to flag up jobs still to be done.
+
+For comments on what everything is supposed to do, see the Python version of MicroQiskit.
+https://github.com/quantumjim/MicroQiskit/blob/master/microqiskit.py
+*/
+
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
+#include <complex>  
 #include <iostream>
 #include <bitset>
 #include <ctime>
@@ -12,13 +20,13 @@ using namespace std;
 const int n_qubits_max = 20; // limit on qubit number
 
 class QuantumCircuit {
-  // Stores information regarding a quantum circuit.
 
   public:
 
-    int n_qubits,n_bits;
+    int n_qubits, n_bits;
     vector<vector<string>> data;
 
+    // TO DO: Could this be done by a constructor, and still be consistent with the usage of QuantumCircuit objects in Simulator?
     void set_registers (int n, int m = 0) {
       n_qubits = n;
       n_bits = m;
@@ -34,8 +42,8 @@ class QuantumCircuit {
 
     }
 
-    // The following functions append an entry to `data` to record the gates that are
-    // added to the circuit. Each type of gate has its own function.
+    // TO DO: Add initialize function
+
     void x (int q) {
       vector<string> gate;
       gate.push_back("x");
@@ -70,13 +78,11 @@ class QuantumCircuit {
       data.push_back(gate);
     }
     void rz (double theta, int q) {
-      // This gate is constructed from `h` and `rx`.
       h(q);
       rx(theta,q);
       h(q);
     }
     void ry (double theta, int q) {
-      // This gate is constructed from `h` and `rx`.
       rx(M_PI/2,q);
       h(q);
       rx(theta,q);
@@ -84,11 +90,9 @@ class QuantumCircuit {
       rx(-M_PI/2,q);
     }
     void z ( int q) {
-      // This gate is constructed from `rz`.
       rz(M_PI,q);
     }
     void y ( int q) {
-      // This gate is constructed from `rz` and `x`.
       z(q);
       x(q);
     }
@@ -216,12 +220,20 @@ class Simulator {
       shots = shots_in;
     }
 
-    vector<vector<double>> get_statevector () {
+    vector<std::complex<double>> get_statevector () {
     
       vector<vector<double>> ket;
       ket = simulate(qc);
 
-      return ket;
+      vector<std::complex<double>> complex_ket;
+      for (int j=0; j<ket.size(); j++){
+
+        std::complex<double> e (ket[j][0],ket[j][1]);
+        complex_ket.push_back( e );
+
+      }
+
+      return complex_ket;
 
     }
 
