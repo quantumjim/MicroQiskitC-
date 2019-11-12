@@ -31,6 +31,8 @@ class QuantumCircuit {
     void set_registers (int n, int m = 0) {
       n_qubits = n;
       n_bits = m;
+      // TO DO: Only the cases n_qubits=n_bits and n_bits=0 are allowed in MicroQiskit.
+      // Abort and explain if the user provides other inputs.
     }
 
     void add (QuantumCircuit qc2) {
@@ -40,7 +42,8 @@ class QuantumCircuit {
       for (int g=0; g<qc2.data.size(); g++){ 
         data.push_back( qc2.data[g] );
       }
-
+      // TO DO: It is only possible to add circuits with equal n_qubits in MicroQiskit, and qc2.n_bits cannot be non-zero if qc.n_bits is.
+      // Abort and explain if the user provides other inputs.
     }
 
     // TO DO: Add initialize function
@@ -77,6 +80,8 @@ class QuantumCircuit {
       gate.push_back(to_string(b));
       gate.push_back(to_string(q));
       data.push_back(gate);
+      // TO DO: It is only possible to add measure gates of the form measure(j,j) in MicroQiskit.
+      // Abort and explain if the user provides other inputs.
     }
     void rz (double theta, int q) {
       h(q);
@@ -193,6 +198,9 @@ class Simulator {
   }
 
   vector<double> get_probs (QuantumCircuit qc) {
+
+      // TO DO: For get_counts and get_memory (both of which call this function) the circuit should have a full set of measure gates.
+      // Abort and explain if the user does not provide this input.
 
     vector<vector<double>> ket;
     ket = simulate(qc);
