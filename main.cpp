@@ -35,13 +35,13 @@ int main () {
   cout << result.get_qiskit() << endl;
 
   // and also to get the counts
-  std::map<string, int> counts = result.get_counts();
+  map<string, int> counts = result.get_counts();
 
   // let's print this to screen
   cout << "The counts are:" << endl;
-  for(std::map<string, int>::iterator iter = counts.begin(); iter != counts.end(); ++iter){
+  for(map<string, int>::iterator iter = counts.begin(); iter != counts.end(); ++iter){
 
-    std::string bitstring = iter->first;
+    string bitstring = iter->first;
     int count = iter->second;
   
     cout << "Counts for "+bitstring+" = " << count << "\n";
@@ -70,7 +70,7 @@ int main () {
   cout << "Note: It could also be expressed more efficiently in Qiskit, but MicroQiskit compiles everything down to x, rx, h and cx." << endl;
 
   // and also get the statevector
-  vector<std::complex<double>> ket = result2.get_statevector();
+  vector<complex<double>> ket = result2.get_statevector();
 
   // let's print this to screen
   cout << "\nThe statevector is:" << endl;
