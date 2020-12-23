@@ -3,6 +3,7 @@ Comments in this file are mostly there to point out differences with the Python 
 
 For comments on what everything is supposed to do, see the Python version of MicroQiskit.
 https://github.com/quantumjim/MicroQiskit/blob/master/microqiskit.py
+https://github.com/qiskit-community/MicroQiskit
 */
 
 #include <iostream>
