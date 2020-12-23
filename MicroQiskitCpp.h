@@ -18,7 +18,7 @@ https://github.com/qiskit-community/MicroQiskit
 
 using namespace std;
 
-const int nQubits_MAX = 20; // limit on qubit number
+const int N_QUBITS_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
 
 class QuantumCircuit {
@@ -261,8 +261,8 @@ class Simulator {
         for (int j=0; j<probs.size();j++){
           cumu += probs[j];
           if ((r<cumu) && un){
-            std::string long_out = std::bitset<nQubits_MAX>(j).to_string();
-            std::string out = long_out.substr (nQubits_MAX-qc.nQubits,nQubits_MAX);
+            std::string long_out = std::bitset<N_QUBITS_MAX>(j).to_string();
+            std::string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
             memory.push_back( out );
             un = false;
           }
