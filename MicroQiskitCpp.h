@@ -94,8 +94,10 @@ class QuantumCircuit {
       gate.push_back(to_string(b));
       gate.push_back(to_string(q));
       data.push_back(gate);
-      // TO DO: It is only possible to add measure gates of the form measure(j,j) in MicroQiskit.
-      // Abort and explain if the user provides other inputs.
+      if(!(q==b))
+      {
+        ERROR("It is only possible to add measure gates of the form measure(j,j) in MicroQiskit");
+      }
     }
     void rz (double theta, int q) {
       h(q);
