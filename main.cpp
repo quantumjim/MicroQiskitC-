@@ -10,7 +10,7 @@ int main () {
 
   cout << "\n**We start with a Bell pair: the standard 'Hello World' of quantum computing.**" << endl;
 
-  // initialize a circuit with two qubits
+  // initialize a circuit with two qubits 
   QuantumCircuit qc;
   qc.set_registers(2);  
   // add the gates to create a Bell pair
