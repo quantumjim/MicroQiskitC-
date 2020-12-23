@@ -18,32 +18,32 @@ https://github.com/qiskit-community/MicroQiskit
 
 using namespace std;
 
-const int N_QUBITS_MAX = 20; // limit on qubit number
+const int nQubits_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
 
 class QuantumCircuit {
 
   public:
 
-    int n_qubits, n_bits;
+    int nQubits, nBits;
     vector<vector<string>> data;
 
     // TO DO: Could this be done by a constructor, and still be consistent with the usage of QuantumCircuit objects in Simulator?
     void set_registers (int n, int m = 0) {
-      n_qubits = n;
-      n_bits = m;
-      // TO DO: Only the cases n_qubits=n_bits and n_bits=0 are allowed in MicroQiskit.
+      nQubits = n;
+      nBits = m;
+      // TO DO: Only the cases nQubits=nBits and nBits=0 are allowed in MicroQiskit.
       // Abort and explain if the user provides other inputs.
     }
 
     void add (QuantumCircuit qc2) {
 
-      n_bits = max(n_bits,qc2.n_bits);
+      nBits = max(nBits,qc2.nBits);
       
       for (int g=0; g<qc2.data.size(); g++){ 
         data.push_back( qc2.data[g] );
       }
-      // TO DO: It is only possible to add circuits with equal n_qubits in MicroQiskit, and qc2.n_bits cannot be non-zero if qc.n_bits is.
+      // TO DO: It is only possible to add circuits with equal nQubits in MicroQiskit, and qc2.nBits cannot be non-zero if qc.nBits is.
       // Abort and explain if the user provides other inputs.
     }
 
@@ -113,7 +113,7 @@ class Simulator {
 
     vector<vector<double>> ket;
 
-    for (int j=0; j<pow(2,qc.n_qubits); j++){
+    for (int j=0; j<pow(2,qc.nQubits); j++){
       vector<double> e;
       for (int k=0; k<=2; k++){
         e.push_back(0.0);
@@ -131,7 +131,7 @@ class Simulator {
         q = stoi( qc.data[g][qc.data[g].size()-1] );
 
         for (int i0=0; i0<pow(2,q); i0++){
-          for (int i1=0; i1<pow(2,qc.n_qubits-q-1); i1++){
+          for (int i1=0; i1<pow(2,qc.nQubits-q-1); i1++){
             int b0,b1;
             b0 = i0 + int(pow(2,q+1)) * i1;
             b1 = b0 + int(pow(2,q));
@@ -173,7 +173,7 @@ class Simulator {
 
         for (int i0=0; i0<pow(2,l); i0++){
           for (int i1=0; i1<pow(2,h-l-1); i1++){
-            for (int i2=0; i2<pow(2,qc.n_qubits-h-1); i2++){
+            for (int i2=0; i2<pow(2,qc.nQubits-h-1); i2++){
 
               int b0,b1;
               b0 = i0 + pow(2,l+1)*i1 + pow(2,h+1)*i2 + pow(2,s);
@@ -261,8 +261,8 @@ class Simulator {
         for (int j=0; j<probs.size();j++){
           cumu += probs[j];
           if ((r<cumu) && un){
-            std::string long_out = std::bitset<N_QUBITS_MAX>(j).to_string();
-            std::string out = long_out.substr (N_QUBITS_MAX-qc.n_qubits,N_QUBITS_MAX);
+            std::string long_out = std::bitset<nQubits_MAX>(j).to_string();
+            std::string out = long_out.substr (nQubits_MAX-qc.nQubits,nQubits_MAX);
             memory.push_back( out );
             un = false;
           }
@@ -290,29 +290,29 @@ class Simulator {
 
     string get_qiskit () {
 
-        string qiskit_py;
+        string qiskitPy;
 
-        if (qc.n_bits==0){
-          qiskit_py += "qc = QuantumCircuit("+to_string(qc.n_qubits)+")\n";
+        if (qc.nBits==0){
+          qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+")\n";
         } else {
-          qiskit_py += "qc = QuantumCircuit("+to_string(qc.n_qubits)+","+to_string(qc.n_bits)+")\n";
+          qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+","+to_string(qc.nBits)+")\n";
         }
 
         for (int g=0; g<qc.data.size(); g++){
             if (qc.data[g][0]=="x"){
-              qiskit_py += "qc.x("+qc.data[g][1]+")\n";
+              qiskitPy += "qc.x("+qc.data[g][1]+")\n";
             } else if (qc.data[g][0]=="rx") {
-              qiskit_py += "qc.rx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+              qiskitPy += "qc.rx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
             } else if (qc.data[g][0]=="h") {
-              qiskit_py += "qc.h("+qc.data[g][1]+")\n";
+              qiskitPy += "qc.h("+qc.data[g][1]+")\n";
             } else if (qc.data[g][0]=="cx") {
-              qiskit_py += "qc.cx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+              qiskitPy += "qc.cx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
             } else if (qc.data[g][0]=="m") {
-              qiskit_py += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+              qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
             }
         }
 
-        return qiskit_py;
+        return qiskitPy;
 
     }
 
