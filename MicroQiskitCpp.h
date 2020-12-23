@@ -15,11 +15,22 @@ https://github.com/qiskit-community/MicroQiskit
 #include <bitset>
 #include <ctime>
 #include <map>
+#define RESET   "\033[0m"
+#define RED     "\033[31m"      /* Red */
+#define ERROR(MESSAGE) my_error_handler(__FILE__, __LINE__, MESSAGE)
 
 using namespace std;
 
+void my_error_handler(const char* file, int line, const char* message) {
+      cout << RED << message << RESET << endl;
+      cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
+      abort();
+    } // TO DO: maybe __FILE__ and __LINE__ won't be very useful. consider removing it and making it just simply print the error message.
+
 const int N_QUBITS_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
+
+
 
 class QuantumCircuit {
 
@@ -32,8 +43,10 @@ class QuantumCircuit {
     void set_registers (int n, int m = 0) {
       nQubits = n;
       nBits = m;
-      // TO DO: Only the cases nQubits=nBits and nBits=0 are allowed in MicroQiskit.
-      // Abort and explain if the user provides other inputs.
+      if(!(nQubits==nBits || nBits==0))
+      {
+        ERROR("Only the cases nQubits=nBits and nBits=0 are allowed in MicroQiskit");
+      }
     }
 
     void add (QuantumCircuit qc2) {
