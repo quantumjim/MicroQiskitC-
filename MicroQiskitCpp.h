@@ -68,12 +68,14 @@ class QuantumCircuit {
 
     void x (int q) {
       vector<string> gate;
+      verify_qubit_range(q,"x gate");
       gate.push_back("x");
       gate.push_back(to_string(q));
       data.push_back(gate);
     }
     void rx (double theta, int q) {
       vector<string> gate;
+      verify_qubit_range(q,"rx gate");
       gate.push_back("rx");
       gate.push_back(to_string(theta));
       gate.push_back(to_string(q));
@@ -81,12 +83,15 @@ class QuantumCircuit {
     }
     void h (int q) {
       vector<string> gate;
+      verify_qubit_range(q,"h gate");
       gate.push_back("h");
       gate.push_back(to_string(q));
       data.push_back(gate);
     }
     void cx (int s, int t) { 
       vector<string> gate;
+      verify_qubit_range(s,"cx gate");
+      verify_qubit_range(t,"cx gate");
       gate.push_back("cx");
       gate.push_back(to_string(s));
       gate.push_back(to_string(t));
@@ -94,7 +99,6 @@ class QuantumCircuit {
     }
     void measure (int q, int b) {
       vector<string> gate;
-
       if(!(q==b) )
       {
         ERROR("It is only possible to add measure gates of the form measure(j,j) in MicroQiskit");
@@ -109,11 +113,13 @@ class QuantumCircuit {
       
     }
     void rz (double theta, int q) {
+      verify_qubit_range(q,"rz gate");
       h(q);
       rx(theta,q);
       h(q);
     }
     void ry (double theta, int q) {
+      verify_qubit_range(q,"ry gate");
       rx(M_PI/2,q);
       h(q);
       rx(theta,q);
@@ -121,9 +127,11 @@ class QuantumCircuit {
       rx(-M_PI/2,q);
     }
     void z ( int q) {
+      verify_qubit_range(q,"z gate");
       rz(M_PI,q);
     }
     void y ( int q) {
+      verify_qubit_range(q,"y gate");
       z(q);
       x(q);
     }
