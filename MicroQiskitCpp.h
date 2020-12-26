@@ -25,7 +25,7 @@ using namespace std;
 
 void my_error_handler(const char* file, int line, const char* message) {
       cout << RED << message << RESET << endl;
-      cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
+      //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
       abort();
     } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
 
@@ -63,6 +63,7 @@ class QuantumCircuit {
     }
 
     // TO DO: Add initialize function
+    // do you mean this https://microqiskit.readthedocs.io/en/latest/micropython.html#microqiskit.QuantumCircuit.initialize ?
 
     void x (int q) {
       vector<string> gate;
