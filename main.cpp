@@ -1,5 +1,9 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include "MicroQiskitCpp.h"
+
+using namespace std;
 
 int main () {
 

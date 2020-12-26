@@ -11,6 +11,7 @@ https://github.com/qiskit-community/MicroQiskit
 #include <stdlib.h>
 #include <math.h>
 #include <vector>
+#include <string>
 #include <complex>  
 #include <iostream>
 #include <bitset>
@@ -335,5 +336,3 @@ class Simulator {
 };
 
 #endif
-
-
