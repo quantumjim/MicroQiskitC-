@@ -15,7 +15,7 @@ int main () {
   cout<<"my own quick tests"<<endl;
   // initialize a circuit with two qubits 
   QuantumCircuit qc0;
-  qc0.set_registers(2,2);  
+  qc0.set_registers(2);  
   // add the gates
   qc0.h(0);
   qc0.measure(0,0);
