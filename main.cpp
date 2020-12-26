@@ -12,6 +12,30 @@ int main () {
   cout << "\nFor the standard version of Qiskit, see qiskit.org. To run your quantum programs\non real quantum hardware, see quantum-computing.ibm.com." << endl;
   cout << "===================================================================================\n" << endl;
 
+  cout<<"my own quick tests"<<endl;
+  // initialize a circuit with two qubits 
+  QuantumCircuit qc0;
+  qc0.set_registers(2);  
+  // add the gates
+  qc0.h(0);
+  qc0.measure(0,0);
+  qc0.measure(1,1);
+  //at this point the data vector looks like: < <'h','0'> <'m','0','0'> <'m','1','1'> >
+  // simulate the circuit and get a result
+  Simulator result0 (qc0, 100);
+  // we can use the result to see what the Qiskit syntax would be
+  cout << "\nThis circuit could be expressed in Qiskit as:" << endl;
+  cout << result0.get_qiskit() << endl;
+  // and also to get the counts
+  map<string, int> counts0 = result0.get_counts();
+  // let's print this to screen
+  cout << "The counts are:" << endl;
+  for(map<string, int>::iterator iter = counts0.begin(); iter != counts0.end(); ++iter){
+    string bitstring = iter->first;
+    int count = iter->second;
+    cout << "Counts for "+bitstring+" = " << count << "\n";
+  }
+
   cout << "\n**We start with a Bell pair: the standard 'Hello World' of quantum computing.**" << endl;
 
   // initialize a circuit with two qubits 

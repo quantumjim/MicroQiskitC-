@@ -23,11 +23,12 @@ https://github.com/qiskit-community/MicroQiskit
 
 using namespace std;
 
-void my_error_handler(const char* file, int line, const char* message) {
-      cout << RED << message << RESET << endl;
-      //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
-      abort();
-    } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
+void my_error_handler(const char* file, int line, const string message) 
+{
+  cout << RED << message << RESET << endl;
+  //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
+  abort();
+} // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
 
 const int N_QUBITS_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
@@ -93,14 +94,19 @@ class QuantumCircuit {
     }
     void measure (int q, int b) {
       vector<string> gate;
+
+      if(!(q==b) )
+      {
+        ERROR("It is only possible to add measure gates of the form measure(j,j) in MicroQiskit");
+      }
+      verify_qubit_range(q,"measure gate");
+      verify_bit_range(b,"measure gate");
+
       gate.push_back("m");
       gate.push_back(to_string(b));
       gate.push_back(to_string(q));
       data.push_back(gate);
-      if(!(q==b))
-      {
-        ERROR("It is only possible to add measure gates of the form measure(j,j) in MicroQiskit");
-      }
+      
     }
     void rz (double theta, int q) {
       h(q);
@@ -121,7 +127,21 @@ class QuantumCircuit {
       z(q);
       x(q);
     }
-
+  private:
+    void verify_qubit_range(int q, string gate)
+    {
+      if(!(q>=0) || !(q<nQubits) )
+      {
+        ERROR(gate+": Index for qubit out of range");
+      }
+    }
+    void verify_bit_range(int b, string gate)
+    {
+      if(!(b>=0) || !(b<nBits))
+      {
+        ERROR(gate+": Index for bit out of range");
+      }
+    }
 };
 
 class Simulator {
@@ -131,22 +151,25 @@ class Simulator {
 
     vector<vector<double>> ket;
 
+    // initializing the internal ket
     for (int j=0; j<pow(2,qc.nQubits); j++){
       vector<double> e;
       for (int k=0; k<=2; k++){
         e.push_back(0.0);
       }
-      ket.push_back(e);
-    }
-    ket[0][0] = 1.0;
+      ket.push_back(e); //add vector{0.0, 0.0, 0.0}
+    }//for 2 qubits < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
+    ket[0][0] = 1.0; //change the first number on the first vector in ket
+    //< <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
 
-
+    //for each gate in qc.data vector (a vetor which is of the type vector<vector<string>>) there is an added vector<string>. Thus, qc.data.size() = the number of gates in qc.
     for (int g=0; g<qc.data.size(); g++){
 
       if ( (qc.data[g][0]=="x") or (qc.data[g][0]=="rx") or (qc.data[g][0]=="h") ) {
 
         int q;
         q = stoi( qc.data[g][qc.data[g].size()-1] );
+        //retrieve the last qubit number from the gate vector. e.g. <'h','1'> = 1
 
         for (int i0=0; i0<pow(2,q); i0++){
           for (int i1=0; i1<pow(2,qc.nQubits-q-1); i1++){
@@ -241,17 +264,18 @@ class Simulator {
     int shots;
 
     Simulator (QuantumCircuit qc_in, int shots_in = 1024) {
-      srand((unsigned)time(0));
+      srand((unsigned)time(0));//seed for rand() calculated from the epoch date
       qc = qc_in;
       shots = shots_in;
     }
 
     vector<std::complex<double>> get_statevector () {
+      //TODO remove std::
     
       vector<vector<double>> ket;
       ket = simulate(qc);
-
       vector<std::complex<double>> complex_ket;
+
       for (int j=0; j<ket.size(); j++){
 
         std::complex<double> e (ket[j][0],ket[j][1]);
@@ -294,7 +318,7 @@ class Simulator {
 
     std::map<std::string, int> get_counts () {
 
-      std::map<std::string, int> counts;
+      std::map<std::string, int> counts;//TODO remove std::
 
       vector<string> memory = get_memory();
 
