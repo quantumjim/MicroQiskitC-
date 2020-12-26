@@ -5,7 +5,8 @@ For comments on what everything is supposed to do, see the Python version of Mic
 https://github.com/quantumjim/MicroQiskit/blob/master/microqiskit.py
 https://github.com/qiskit-community/MicroQiskit
 */
-
+#ifndef MICROQISKITCPP_H
+#define MICROQISKITCPP_H
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
@@ -25,7 +26,7 @@ void my_error_handler(const char* file, int line, const char* message) {
       cout << RED << message << RESET << endl;
       cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
       abort();
-    } // TO DO: maybe __FILE__ and __LINE__ won't be very useful. consider removing it and making it just simply print the error message.
+    } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
 
 const int N_QUBITS_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
@@ -333,6 +334,6 @@ class Simulator {
 
 };
 
-
+#endif
 
 
