@@ -30,9 +30,8 @@ void my_error_handler(const char* file, int line, const string message)
   abort();
 } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
 
-const int N_QUBITS_MAX = 20; // limit on qubit number
+// const int N_QUBITS_MAX = 20; // limit on qubit number
 // TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
-
 
 
 class QuantumCircuit {
@@ -135,9 +134,10 @@ class QuantumCircuit {
       z(q);
       x(q);
     }
+
     bool has_measurements(){
       //this is not totally bulletproof. i.e. it doesn't care where you actually place the gates :/
-      vector<int> mGates; //{0,1,2,2,3,3};
+      vector<int> mGates;
       map<int,int> mUnique;
       map<int,int>::iterator it;
       //check all gates in circuit
@@ -151,7 +151,6 @@ class QuantumCircuit {
       //a full set of measurement gates must have a measure gate on each qubit in the circuit
       //create a list of all unique measure-gated qubits
       for(int num : mGates){
-        //i'm so proud that I didn't have to include an extra algorithm header and managed to find unique entries with just map <3
         mUnique[mGates[num]]=1;//the 1 doesn't matter
       }
       //check if we have a measure gate for each qubit
@@ -161,25 +160,28 @@ class QuantumCircuit {
           return false;
         }
       }
-      return true;
       // cout<<mUnique.size()<<endl;
       // cout<<mUnique.find(2)->second<<endl;
+
+      return true;
     }
+
   private:
-    void verify_qubit_range(int q, string gate)
-    {
+
+    void verify_qubit_range(int q, string gate){
       if(!(q>=0) || !(q<nQubits) )
       {
         ERROR(gate+": Index for qubit out of range");
       }
     }
-    void verify_bit_range(int b, string gate)
-    {
+
+    void verify_bit_range(int b, string gate){
       if(!(b>=0) || !(b<nBits))
       {
         ERROR(gate+": Index for bit out of range");
       }
     }
+
 };
 
 class Simulator {
@@ -275,7 +277,6 @@ class Simulator {
     }
 
     return ket;//< <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
-
   }
 
   vector<double> get_probs (QuantumCircuit qc) {
@@ -285,17 +286,16 @@ class Simulator {
     }
 
     vector<vector<double>> ket;
-    ket = simulate(qc);
+    ket = simulate(qc);//for a 2qb qc with <"x",1> < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
 
     vector<double> probs;
-    for (int j=0; j<ket.size(); j++){
+    for (int j=0; j<ket.size(); j++){//ket.size is 4
 
       probs.push_back( pow(ket[j][0],2) + pow(ket[j][1],2) );
 
-    }
+    }// < 0.0, 0.0, 1.0, 0.0 >
 
     return probs;
-
   }
 
   public:
@@ -310,7 +310,6 @@ class Simulator {
     }
 
     vector<complex<double>> get_statevector () {
-      //TODO remove std::
     
       vector<vector<double>> ket;
       ket = simulate(qc);
@@ -324,13 +323,12 @@ class Simulator {
       }
 
       return complex_ket;
-
     }
 
     vector<string> get_memory () {
 
       vector<double> probs;
-      probs = get_probs(qc);
+      probs = get_probs(qc);// < 0.0, 0.0, 1.0, 0.0 >
 
       vector<string> memory;
 
@@ -339,27 +337,33 @@ class Simulator {
         double cumu = 0;
         bool un = true;
         double r = double(rand())/RAND_MAX;
+        vector<char> bitstr(qc.nQubits,'0');
 
-        for (int j=0; j<probs.size();j++){
-          cumu += probs[j];
-          if ((r<cumu) && un){
-            string long_out = bitset<N_QUBITS_MAX>(j).to_string();
-            string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
+        for (int j=0; j<probs.size();j++){//size is 4
+          cumu += probs[j];//this will add up to 1  
+          if ((r<cumu) && un){//isn't there a chance that r will be 1.0?
+            // string long_out = bitset<N_QUBITS_MAX>(j).to_string();//
+            // string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
+            
+            //here is my version:
+            for( int w=0; w<(j+1); w++ ){
+              bool result = int(pow(2,w))&j;
+              bitstr[j-w]= result?'1':'0';
+            }
+            string out(bitstr.begin(), bitstr.end());
+
             memory.push_back( out );
             un = false;
           }
         }
-
       }
 
       return memory;
-
     }
 
     map<string, int> get_counts () {
 
       map<string, int> counts;
-
       vector<string> memory = get_memory();//im here
 
       for (int s=0; s<shots; s++){
@@ -367,7 +371,6 @@ class Simulator {
       }
 
       return counts;
-
     }
 
     string get_qiskit () {
@@ -393,15 +396,16 @@ class Simulator {
             qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
           }
       }
+
       return qiskitPy;
     }
 
     string get_qasm () {
       string qasm;
       // TODO
+
       return qasm;
     }
 
 };
-
 #endif
