@@ -30,9 +30,6 @@ void my_error_handler(const char* file, int line, const string message)
   abort();
 } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
 
-// const int N_QUBITS_MAX = 20; // limit on qubit number
-// TO DO: Remove this! It is only used in conversions to bit strings, because it doesn't like variables.
-
 
 class QuantumCircuit {
 
@@ -337,21 +334,16 @@ class Simulator {
         double cumu = 0;
         bool un = true;
         double r = double(rand())/RAND_MAX;
-        vector<char> bitstr(qc.nQubits,'0');
+        vector<char> bitstr (qc.nQubits,'0');
 
         for (int j=0; j<probs.size();j++){//size is 4
           cumu += probs[j];//this will add up to 1  
-          if ((r<cumu) && un){//isn't there a chance that r will be 1.0?
-            // string long_out = bitset<N_QUBITS_MAX>(j).to_string();//
-            // string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
-            
-            //here is my version:
+          if ((r<cumu) && un){//TODO isn't there a chance that r will be 1.0?
             for( int w=0; w<(j+1); w++ ){
               bool result = int(pow(2,w))&j;
               bitstr[j-w]= result?'1':'0';
             }
             string out(bitstr.begin(), bitstr.end());
-
             memory.push_back( out );
             un = false;
           }
