@@ -19,7 +19,9 @@ int main () {
   qc0.set_registers(2,2);  
   // add the gates
   // qc0.h(1);
-  qc0.x(1);
+  qc0.h(0);
+  qc0.h(0);
+  // qc0.cx(0,1);
   qc0.measure(0,0);
   qc0.measure(1,1);
   //at this point the data vector looks like: < <"h","0"> <"m","0","0"> <"m","1","1"> >
