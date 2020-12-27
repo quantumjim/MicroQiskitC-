@@ -38,15 +38,13 @@ class QuantumCircuit {
     int nQubits, nBits;
     vector<vector<string>> data;
     
-    // TO DO: Could this be done by a constructor, and still be consistent with the usage of QuantumCircuit objects in Simulator?
-    //let me try it...
     QuantumCircuit (){
 
     }
     QuantumCircuit (int n, int m = 0){
       set_registers (n, m);
     }
-    //I guess so!
+    
     void set_registers (int n, int m = 0) {
       nQubits = n;
       nBits = m;

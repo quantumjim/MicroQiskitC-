@@ -39,12 +39,12 @@ int main () {
   }
 
   // and also get the statevector
-  vector<complex<double>> ket = result0.get_statevector();
+  vector<complex<double>> ket0 = result0.get_statevector();
 
   // let's print this to screen
   cout << "\nThe statevector is:" << endl;
-  for (int j=0; j<ket.size(); j++){
-    cout << "(" << real(ket[j]) << ") + (" << imag(ket[j]) << ")" <<  "*i" << endl;
+  for (int j=0; j<ket0.size(); j++){
+    cout << "(" << real(ket0[j]) << ") + (" << imag(ket0[j]) << ")" <<  "*i" << endl;
   }
 
   // cout << "\n**We start with a Bell pair: the standard 'Hello World' of quantum computing.**" << endl;
