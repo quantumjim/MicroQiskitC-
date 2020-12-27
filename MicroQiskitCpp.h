@@ -44,7 +44,7 @@ class QuantumCircuit {
     QuantumCircuit (int n, int m = 0){
       set_registers (n, m);
     }
-    
+
     void set_registers (int n, int m = 0) {
       nQubits = n;
       nBits = m;
@@ -99,6 +99,7 @@ class QuantumCircuit {
       gate.push_back(to_string(t));
       data.push_back(gate);
     }
+    //TODO add ch gate
     void measure (int q, int b) {
       vector<string> gate;
       if(!(q==b) )
@@ -162,8 +163,6 @@ class QuantumCircuit {
           return false;
         }
       }
-      // cout<<mUnique.size()<<endl;
-      // cout<<mUnique.find(2)->second<<endl;
 
       return true;
     }
@@ -196,12 +195,12 @@ class Simulator {
     // initializing the internal ket
     for (int j=0; j<pow(2,qc.nQubits); j++){
       vector<double> e;
-      for (int k=0; k<=2; k++){//TODO this needs to be reviewed. As far as I can tell it should be k<2, not k<=2. No method ever gets access to 3rd double.
+      for (int k=0; k<2; k++){
         e.push_back(0.0);
       }
       ket.push_back(e); //add vector{0.0, 0.0, 0.0}
     }//for 2 qubits < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
-    ket[0][0] = 1.0; //change the first number on the first vector in ket. this means that by default it will be measuring 0
+    ket[0][0] = 1.0; //change the first number on the first vector in ket. this means that by default it will be measuring 0, because that's the first bitstr.
     //< <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
 
     //for each gate in qc.data vector (a vetor which is of the type vector<vector<string>>) there is an added vector<string>. Thus, qc.data.size() = the number of gates in qc.
@@ -339,7 +338,7 @@ class Simulator {
         double r = double(rand())/RAND_MAX;
         vector<char> bitstr (qc.nQubits,'0');
 
-        for (int j=0; j<probs.size();j++){//size is 4
+        for (int j=0; j<probs.size();j++){//size is 
           cumu += probs[j];//this will add up to 1  
           if ((r<cumu) && un){//TODO isn't there a chance that r will be 1.0?
             // string long_out = bitset<N_QUBITS_MAX>(j).to_string(); //
@@ -365,7 +364,7 @@ class Simulator {
     map<string, int> get_counts () {
 
       map<string, int> counts;//similar to dictionary
-      vector<string> memory = get_memory();//im here
+      vector<string> memory = get_memory();
 
       for (int s=0; s<shots; s++){
         counts[memory[s]] += 1;//aggregate by key/bitstr
