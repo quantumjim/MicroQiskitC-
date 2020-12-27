@@ -309,16 +309,16 @@ class Simulator {
       shots = shots_in;
     }
 
-    vector<std::complex<double>> get_statevector () {
+    vector<complex<double>> get_statevector () {
       //TODO remove std::
     
       vector<vector<double>> ket;
       ket = simulate(qc);
-      vector<std::complex<double>> complex_ket;
+      vector<complex<double>> complex_ket;
 
       for (int j=0; j<ket.size(); j++){
 
-        std::complex<double> e (ket[j][0],ket[j][1]);
+        complex<double> e (ket[j][0],ket[j][1]);
         complex_ket.push_back( e );
 
       }
@@ -343,8 +343,8 @@ class Simulator {
         for (int j=0; j<probs.size();j++){
           cumu += probs[j];
           if ((r<cumu) && un){
-            std::string long_out = std::bitset<N_QUBITS_MAX>(j).to_string();
-            std::string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
+            string long_out = bitset<N_QUBITS_MAX>(j).to_string();
+            string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
             memory.push_back( out );
             un = false;
           }
@@ -356,9 +356,9 @@ class Simulator {
 
     }
 
-    std::map<std::string, int> get_counts () {
+    map<string, int> get_counts () {
 
-      std::map<std::string, int> counts;//TODO remove std::
+      map<string, int> counts;
 
       vector<string> memory = get_memory();//im here
 
@@ -371,31 +371,35 @@ class Simulator {
     }
 
     string get_qiskit () {
+      // TODO: can we make this print QASM-ready code?
+      string qiskitPy;
 
-        string qiskitPy;
+      if (qc.nBits==0){
+        qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+")\n";
+      } else {
+        qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+","+to_string(qc.nBits)+")\n";
+      }
 
-        if (qc.nBits==0){
-          qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+")\n";
-        } else {
-          qiskitPy += "qc = QuantumCircuit("+to_string(qc.nQubits)+","+to_string(qc.nBits)+")\n";
-        }
+      for (int g=0; g<qc.data.size(); g++){
+          if (qc.data[g][0]=="x"){
+            qiskitPy += "qc.x("+qc.data[g][1]+")\n";
+          } else if (qc.data[g][0]=="rx") {
+            qiskitPy += "qc.rx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+          } else if (qc.data[g][0]=="h") {
+            qiskitPy += "qc.h("+qc.data[g][1]+")\n";
+          } else if (qc.data[g][0]=="cx") {
+            qiskitPy += "qc.cx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+          } else if (qc.data[g][0]=="m") {
+            qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+          }
+      }
+      return qiskitPy;
+    }
 
-        for (int g=0; g<qc.data.size(); g++){
-            if (qc.data[g][0]=="x"){
-              qiskitPy += "qc.x("+qc.data[g][1]+")\n";
-            } else if (qc.data[g][0]=="rx") {
-              qiskitPy += "qc.rx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
-            } else if (qc.data[g][0]=="h") {
-              qiskitPy += "qc.h("+qc.data[g][1]+")\n";
-            } else if (qc.data[g][0]=="cx") {
-              qiskitPy += "qc.cx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
-            } else if (qc.data[g][0]=="m") {
-              qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
-            }
-        }
-
-        return qiskitPy;
-
+    string get_qasm () {
+      string qasm;
+      // TODO
+      return qasm;
     }
 
 };

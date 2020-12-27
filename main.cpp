@@ -19,9 +19,8 @@ int main () {
   // add the gates
   qc0.h(0);
   qc0.measure(0,0);
-  // qc0.measure(1,1);
-  cout<<qc0.has_measurements()<<endl;
-  //at this point the data vector looks like: < <'h','0'> <'m','0','0'> <'m','1','1'> >
+  qc0.measure(1,1);
+  //at this point the data vector looks like: < <"h","0"> <"m","0","0"> <"m","1","1"> >
   // simulate the circuit and get a result
   Simulator result0 (qc0, 100);
   // we can use the result to see what the Qiskit syntax would be
@@ -35,6 +34,15 @@ int main () {
     string bitstring = iter->first;
     int count = iter->second;
     cout << "Counts for "+bitstring+" = " << count << "\n";
+  }
+
+  // and also get the statevector
+  vector<complex<double>> ket = result0.get_statevector();
+
+  // let's print this to screen
+  cout << "\nThe statevector is:" << endl;
+  for (int j=0; j<ket.size(); j++){
+    cout << "(" << real(ket[j]) << ") + (" << imag(ket[j]) << ")" <<  "*i" << endl;
   }
 
   // cout << "\n**We start with a Bell pair: the standard 'Hello World' of quantum computing.**" << endl;
