@@ -43,6 +43,7 @@ class QuantumCircuit {
     vector<vector<string>> data;
 
     // TO DO: Could this be done by a constructor, and still be consistent with the usage of QuantumCircuit objects in Simulator?
+    //let me try it...
     void set_registers (int n, int m = 0) {
       nQubits = n;
       nBits = m;
@@ -110,7 +111,6 @@ class QuantumCircuit {
       gate.push_back(to_string(b));
       gate.push_back(to_string(q));
       data.push_back(gate);
-      
     }
     void rz (double theta, int q) {
       verify_qubit_range(q,"rz gate");
@@ -134,6 +134,36 @@ class QuantumCircuit {
       verify_qubit_range(q,"y gate");
       z(q);
       x(q);
+    }
+    bool has_measurements(){
+      //this is not totally bulletproof. i.e. it doesn't care where you actually place the gates :/
+      vector<int> mGates; //{0,1,2,2,3,3};
+      map<int,int> mUnique;
+      map<int,int>::iterator it;
+      //check all gates in circuit
+      for (int g=0; g<data.size(); g++){
+        //collect all measure gates in mGates
+        if (data[g][0]=="m"){
+          //just need the qubit they are assigned to
+          mGates.push_back( stoi(data[g][1]) );
+        }
+      }
+      //a full set of measurement gates must have a measure gate on each qubit in the circuit
+      //create a list of all unique measure-gated qubits
+      for(int num : mGates){
+        //i'm so proud that I didn't have to include an extra algorithm header and managed to find unique entries with just map <3
+        mUnique[mGates[num]]=1;//the 1 doesn't matter
+      }
+      //check if we have a measure gate for each qubit
+      for(int i=0; i<nQubits; i++){
+        it = mUnique.find(i);
+        if(it == mUnique.end()){
+          return false;
+        }
+      }
+      return true;
+      // cout<<mUnique.size()<<endl;
+      // cout<<mUnique.find(2)->second<<endl;
     }
   private:
     void verify_qubit_range(int q, string gate)
@@ -177,21 +207,22 @@ class Simulator {
 
         int q;
         q = stoi( qc.data[g][qc.data[g].size()-1] );
-        //retrieve the last qubit number from the gate vector. e.g. <'h','1'> = 1
+        //retrieve the last qubit number from the gate vector. e.g. <"x",1> = 1
 
         for (int i0=0; i0<pow(2,q); i0++){
           for (int i1=0; i1<pow(2,qc.nQubits-q-1); i1++){
             int b0,b1;
-            b0 = i0 + int(pow(2,q+1)) * i1;
-            b1 = b0 + int(pow(2,q));
+            b0 = i0 + int(pow(2,q+1)) * i1;//0+4*0 /1+4*0
+            b1 = b0 + int(pow(2,q));//0+2 /1+2
 
             vector<double> e0, e1;
-            e0 = ket[b0];
-            e1 = ket[b1];
+            e0 = ket[b0];//<1.0, 0.0, 0.0>
+            e1 = ket[b1];//<0.0, 0.0, 0.0>
 
             if (qc.data[g][0]=="x"){
               ket[b0] = e1;
               ket[b1] = e0;
+              //at this point ket: //< <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
             } else if (qc.data[g][0]=="rx"){
               double theta = stof( qc.data[g][1] );
               ket[b0][0] = e0[0]*cos(theta/2)+e1[1]*sin(theta/2);
@@ -243,14 +274,15 @@ class Simulator {
 
     }
 
-    return ket;
+    return ket;//< <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
 
   }
 
   vector<double> get_probs (QuantumCircuit qc) {
 
-      // TO DO: For get_counts and get_memory (both of which call this function) the circuit should have a full set of measure gates.
-      // Abort and explain if the user does not provide this input.
+    if(!qc.has_measurements()){
+      ERROR("get_probs: The circuit should have a full set of measure gates");
+    }
 
     vector<vector<double>> ket;
     ket = simulate(qc);
@@ -328,7 +360,7 @@ class Simulator {
 
       std::map<std::string, int> counts;//TODO remove std::
 
-      vector<string> memory = get_memory();
+      vector<string> memory = get_memory();//im here
 
       for (int s=0; s<shots; s++){
         counts[memory[s]] += 1;
