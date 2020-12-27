@@ -29,7 +29,7 @@ void my_error_handler(const char* file, int line, const string message)
   //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
   abort();
 } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
-
+// const int N_QUBITS_MAX = 20; //TODO remove this
 
 class QuantumCircuit {
 
@@ -37,9 +37,16 @@ class QuantumCircuit {
 
     int nQubits, nBits;
     vector<vector<string>> data;
-
+    
     // TO DO: Could this be done by a constructor, and still be consistent with the usage of QuantumCircuit objects in Simulator?
     //let me try it...
+    QuantumCircuit (){
+
+    }
+    QuantumCircuit (int n, int m = 0){
+      set_registers (n, m);
+    }
+    //I guess so!
     void set_registers (int n, int m = 0) {
       nQubits = n;
       nBits = m;
@@ -191,12 +198,12 @@ class Simulator {
     // initializing the internal ket
     for (int j=0; j<pow(2,qc.nQubits); j++){
       vector<double> e;
-      for (int k=0; k<=2; k++){
+      for (int k=0; k<=2; k++){//TODO this needs to be reviewed. As far as I can tell it should be k<2, not k<=2. No method ever gets access to 3rd double.
         e.push_back(0.0);
       }
       ket.push_back(e); //add vector{0.0, 0.0, 0.0}
     }//for 2 qubits < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
-    ket[0][0] = 1.0; //change the first number on the first vector in ket
+    ket[0][0] = 1.0; //change the first number on the first vector in ket. this means that by default it will be measuring 0
     //< <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
 
     //for each gate in qc.data vector (a vetor which is of the type vector<vector<string>>) there is an added vector<string>. Thus, qc.data.size() = the number of gates in qc.
@@ -249,7 +256,7 @@ class Simulator {
           h = t;
           l = s;
         }
-
+        //this one i still need to study
         for (int i0=0; i0<pow(2,l); i0++){
           for (int i1=0; i1<pow(2,h-l-1); i1++){
             for (int i2=0; i2<pow(2,qc.nQubits-h-1); i2++){
@@ -309,14 +316,12 @@ class Simulator {
     vector<complex<double>> get_statevector () {
     
       vector<vector<double>> ket;
-      ket = simulate(qc);
+      ket = simulate(qc);//for a 2qb qc with <"x",1> < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
       vector<complex<double>> complex_ket;
 
-      for (int j=0; j<ket.size(); j++){
-
+      for (int j=0; j<ket.size(); j++){//size is 4
         complex<double> e (ket[j][0],ket[j][1]);
         complex_ket.push_back( e );
-
       }
 
       return complex_ket;
@@ -339,9 +344,15 @@ class Simulator {
         for (int j=0; j<probs.size();j++){//size is 4
           cumu += probs[j];//this will add up to 1  
           if ((r<cumu) && un){//TODO isn't there a chance that r will be 1.0?
-            for( int w=0; w<(j+1); w++ ){
+            // string long_out = bitset<N_QUBITS_MAX>(j).to_string(); //
+            // cout<<"long_out: "<<long_out<<endl;
+            // string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
+            //todo remove this
+            
+            //here is my version:
+            for( int w=0; w<bitstr.size(); w++ ){
               bool result = int(pow(2,w))&j;
-              bitstr[j-w]= result?'1':'0';
+              bitstr[qc.nQubits-1-w]= result?'1':'0';
             }
             string out(bitstr.begin(), bitstr.end());
             memory.push_back( out );
@@ -350,16 +361,16 @@ class Simulator {
         }
       }
 
-      return memory;
+      return memory;//<"10","10","10","10","10","10","10","10","10","10">
     }
 
     map<string, int> get_counts () {
 
-      map<string, int> counts;
+      map<string, int> counts;//similar to dictionary
       vector<string> memory = get_memory();//im here
 
       for (int s=0; s<shots; s++){
-        counts[memory[s]] += 1;
+        counts[memory[s]] += 1;//aggregate by key/bitstr
       }
 
       return counts;

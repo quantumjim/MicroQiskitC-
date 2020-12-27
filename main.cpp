@@ -15,14 +15,16 @@ int main () {
   cout<<"my own quick tests"<<endl;
   // initialize a circuit with two qubits 
   QuantumCircuit qc0;
+  // if using constructor: QuantumCircuit qc0 (2,2); and no need to set_registers()
   qc0.set_registers(2,2);  
   // add the gates
-  qc0.h(0);
+  // qc0.h(1);
+  qc0.x(1);
   qc0.measure(0,0);
   qc0.measure(1,1);
   //at this point the data vector looks like: < <"h","0"> <"m","0","0"> <"m","1","1"> >
   // simulate the circuit and get a result
-  Simulator result0 (qc0, 100);
+  Simulator result0 (qc0, 10);
   // we can use the result to see what the Qiskit syntax would be
   cout << "\nThis circuit could be expressed in Qiskit as:" << endl;
   cout << result0.get_qiskit() << endl;
