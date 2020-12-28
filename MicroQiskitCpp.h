@@ -29,6 +29,7 @@ void my_error_handler(const char* file, int line, const string message)
   //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
   abort();
 } // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
+
 // const int N_QUBITS_MAX = 20; //TODO remove this
 
 class QuantumCircuit {
@@ -99,7 +100,27 @@ class QuantumCircuit {
       gate.push_back(to_string(t));
       data.push_back(gate);
     }
-    //TODO add ch gate
+    //TODO add new ch gate
+    void ch (int s, int t) { 
+      vector<string> gate;
+      verify_qubit_range(s,"ch gate");
+      verify_qubit_range(t,"ch gate");
+      gate.push_back("cx");
+      gate.push_back(to_string(s));
+      gate.push_back(to_string(t));
+      data.push_back(gate);
+    }
+    //TODO add crx gate
+    void crx (double theta, int s, int t) { 
+      vector<string> gate;
+      verify_qubit_range(s,"crx gate");
+      verify_qubit_range(t,"crx gate");
+      gate.push_back("crx");
+      gate.push_back(to_string(theta));
+      gate.push_back(to_string(s));
+      gate.push_back(to_string(t));
+      data.push_back(gate);
+    }
     void measure (int q, int b) {
       vector<string> gate;
       if(!(q==b) )
@@ -251,18 +272,18 @@ class Simulator {
           }
         }
 
-      } else if (qc.data[g][0]=="cx") {
+      } else if ( (qc.data[g][0]=="cx") or (qc.data[g][0]=="cx") or (qc.data[g][0]=="crx") ) {
         int s,t,l,h;
         // we start from qc.x(0): < <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
         cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-        s = stoi( qc.data[g][qc.data[g].size()-2] );//0
-        t = stoi( qc.data[g][qc.data[g].size()-1] );//1
+        s = stoi( qc.data[g][qc.data[g].size()-2] );//1
+        t = stoi( qc.data[g][qc.data[g].size()-1] );//0
         if (s>t){
-          h = s;
-          l = t;
+          h = s;//1
+          l = t;//0
         } else {
-          h = t;//1
-          l = s;//0
+          h = t;//
+          l = s;//
         }
 
         //this one i still need to study
@@ -280,54 +301,20 @@ class Simulator {
               vector<double> e0, e1;
               e0 = ket[b0];//<0.0, 0.0>
               e1 = ket[b1];//<0.0, 0.0>
-
-              ket[b0] = e1;
-              ket[b1] = e0;
-
+              if (qc.data[g][0]=="cx"){
+                ket[b0] = e1;
+                ket[b1] = e0;
+              } else if (qc.data[g][0]=="ch"){
+                //TODO
+              } else if (qc.data[g][0]=="crx"){
+                //TODO
+              }
+              
             }
           }
         }
         // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
         // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
-        
-      // } else if (qc.data[g][0]=="ch") {
-      //   int s,t,l,h;
-      //   // we start from qc.x(0): < <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
-      //   cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-      //   s = stoi( qc.data[g][qc.data[g].size()-2] );//0
-      //   t = stoi( qc.data[g][qc.data[g].size()-1] );//1
-      //   if (s>t){
-      //     h = s;
-      //     l = t;
-      //   } else {
-      //     h = t;//1
-      //     l = s;//0
-      //   }
-
-      //   for (int i0=0; i0<pow(2,l); i0++){//loop 1 time
-      //     for (int i1=0; i1<pow(2,h-l-1); i1++){//loop 1 time
-      //       for (int i2=0; i2<pow(2,qc.nQubits-h-1); i2++){//loop 1 time
-      //         // cout<<"i0: "<<i0<<endl;
-      //         // cout<<"i1: "<<i1<<endl;
-      //         // cout<<"i2: "<<i2<<endl;
-      //         int b0,b1;
-      //         b0 = i0 + pow(2,l+1)*i1 + pow(2,h+1)*i2 + pow(2,s);//0+2*0+4*0+1
-      //         b1 = b0 + pow(2,t);//1+2
-      //         // cout<<"b0: "<<b0<<endl;
-      //         // cout<<"b1: "<<b1<<endl;
-      //         vector<double> e0, e1;
-      //         e0 = ket[b0];//<0.0, 0.0>
-      //         e1 = ket[b1];//<0.0, 0.0>
-
-      //         ket[b0] = e1;
-      //         ket[b1] = e0;
-
-      //       }
-      //     }
-      //   }
-      //   // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-      //   // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
-        
       }
 
     }
