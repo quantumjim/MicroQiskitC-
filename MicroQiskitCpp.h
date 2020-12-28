@@ -254,72 +254,48 @@ class Simulator {
               ket[b1][1] = e1[1]*cos(theta/2)-e0[0]*sin(theta/2);
             } else if (qc.data[g][0]=="h"){
               for (int k=0; k<2; k++){
-                cout<<"k: "<<k<<endl;
-                cout<<"b0: "<<b0<<endl;
-                cout<<"b1: "<<b1<<endl;
                 ket[b0][k] = (e0[k] + e1[k])/sqrt(2);
-                cout<<"e0[k] + e1[k]/sqrt(2): "<<(e0[k] + e1[k])/sqrt(2)<<endl;
                 ket[b1][k] = (e0[k] - e1[k])/sqrt(2);
-                cout<<"e0[k] - e1[k]/sqrt(2): "<<(e0[k] - e1[k])/sqrt(2)<<endl;
-                // cout<<"ket[0][0]: "<<ket[0][0]<<endl;
-                // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-                // cout<<"ket[2][0]: "<<ket[2][0]<<endl;
-                // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
               }
             }
 
           }
         }
 
-      } else if ( (qc.data[g][0]=="cx") or (qc.data[g][0]=="cx") or (qc.data[g][0]=="crx") ) {
+      } else if ( (qc.data[g][0]=="cx") or (qc.data[g][0]=="ch") or (qc.data[g][0]=="crx") ) {
         int s,t,l,h;
-        // we start from qc.x(0): < <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
-        cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-        s = stoi( qc.data[g][qc.data[g].size()-2] );//1
-        t = stoi( qc.data[g][qc.data[g].size()-1] );//0
+        s = stoi( qc.data[g][qc.data[g].size()-2] );
+        t = stoi( qc.data[g][qc.data[g].size()-1] );
         if (s>t){
-          h = s;//1
-          l = t;//0
+          h = s;
+          l = t;
         } else {
-          h = t;//
-          l = s;//
+          h = t;
+          l = s;
         }
 
-        //this one i still need to study
-        for (int i0=0; i0<pow(2,l); i0++){//loop 1 time
-          for (int i1=0; i1<pow(2,h-l-1); i1++){//loop 1 time
-            for (int i2=0; i2<pow(2,qc.nQubits-h-1); i2++){//loop 1 time
-              // cout<<"i0: "<<i0<<endl;
-              // cout<<"i1: "<<i1<<endl;
-              // cout<<"i2: "<<i2<<endl;
+        for (int i0=0; i0<pow(2,l); i0++){
+          for (int i1=0; i1<pow(2,h-l-1); i1++){
+            for (int i2=0; i2<pow(2,qc.nQubits-h-1); i2++){
               int b0,b1;
-              b0 = i0 + pow(2,l+1)*i1 + pow(2,h+1)*i2 + pow(2,s);//0+2*0+4*0+1
-              b1 = b0 + pow(2,t);//1+2
-              // cout<<"b0: "<<b0<<endl;
-              // cout<<"b1: "<<b1<<endl;
+              b0 = i0 + pow(2,l+1)*i1 + pow(2,h+1)*i2 + pow(2,s);
+              b1 = b0 + pow(2,t);
+
               vector<double> e0, e1;
-              e0 = ket[b0];//<0.0, 0.0>
-              e1 = ket[b1];//<0.0, 0.0>
+              e0 = ket[b0];
+              e1 = ket[b1];
+
               if (qc.data[g][0]=="cx"){
                 ket[b0] = e1;
                 ket[b1] = e0;
               } else if (qc.data[g][0]=="ch"){
-                //TODO
+                //TODO review
                 for (int k=0; k<2; k++){
-                  cout<<"k: "<<k<<endl;
-                  cout<<"b0: "<<b0<<endl;
-                  cout<<"b1: "<<b1<<endl;
                   ket[b0][k] = (e0[k] + e1[k])/sqrt(2);
-                  cout<<"e0[k] + e1[k]/sqrt(2): "<<(e0[k] + e1[k])/sqrt(2)<<endl;
                   ket[b1][k] = (e0[k] - e1[k])/sqrt(2);
-                  cout<<"e0[k] - e1[k]/sqrt(2): "<<(e0[k] - e1[k])/sqrt(2)<<endl;
-                  // cout<<"ket[0][0]: "<<ket[0][0]<<endl;
-                  // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-                  // cout<<"ket[2][0]: "<<ket[2][0]<<endl;
-                  // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
                 }
               } else if (qc.data[g][0]=="crx"){
-                //TODO
+                //TODO review
                 double theta = stof( qc.data[g][1] );
                 ket[b0][0] = e0[0]*cos(theta/2)+e1[1]*sin(theta/2);
                 ket[b0][1] = e0[1]*cos(theta/2)-e1[0]*sin(theta/2);
@@ -330,13 +306,11 @@ class Simulator {
             }
           }
         }
-        // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
-        // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
       }
 
     }
 
-    return ket;//< <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
+    return ket;
   }
 
   vector<double> get_probs (QuantumCircuit qc) {
@@ -346,14 +320,14 @@ class Simulator {
     }
 
     vector<vector<double>> ket;
-    ket = simulate(qc);//for a 2qb qc with <"x","0"><"cx","0","1">:  < <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
+    ket = simulate(qc);
 
     vector<double> probs;
-    for (int j=0; j<ket.size(); j++){//ket.size is 4
+    for (int j=0; j<ket.size(); j++){
 
       probs.push_back( pow(ket[j][0],2) + pow(ket[j][1],2) );
 
-    }// < 0.0, 1.0, 0.0, 0.0 >
+    }
 
     return probs;
   }
@@ -372,10 +346,10 @@ class Simulator {
     vector<complex<double>> get_statevector () {
     
       vector<vector<double>> ket;
-      ket = simulate(qc);//for a 2qb qc with <"x",1> < <0.0, 0.0, 0.0> <0.0, 0.0, 0.0> <1.0, 0.0, 0.0> <0.0, 0.0, 0.0> >
+      ket = simulate(qc);
       vector<complex<double>> complex_ket;
 
-      for (int j=0; j<ket.size(); j++){//size is 4
+      for (int j=0; j<ket.size(); j++){
         complex<double> e (ket[j][0],ket[j][1]);
         complex_ket.push_back( e );
       }
@@ -386,7 +360,7 @@ class Simulator {
     vector<string> get_memory () {
 
       vector<double> probs;
-      probs = get_probs(qc);// < 0.0, 1.0, 0.0, 0.0 >
+      probs = get_probs(qc);
 
       vector<string> memory;
 
@@ -397,13 +371,13 @@ class Simulator {
         double r = double(rand())/RAND_MAX;
         vector<char> bitstr (qc.nQubits,'0');
 
-        for (int j=0; j<probs.size();j++){//size is 
+        for (int j=0; j<probs.size();j++){
           cumu += probs[j];//this will add up to 1  
           if ((r<cumu) && un){//TODO isn't there a chance that r will be 1.0?
             // string long_out = bitset<N_QUBITS_MAX>(j).to_string(); //
             // cout<<"long_out: "<<long_out<<endl;
             // string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
-            //todo remove this
+            //TODO remove this old version :)
             
             //here is my version:
             for( int w=0; w<bitstr.size(); w++ ){
@@ -417,7 +391,7 @@ class Simulator {
         }
       }
 
-      return memory;//<"10","10","10","10","10","10","10","10","10","10">
+      return memory;//e.g. <"10","10","10","10","10","10","10","10","10","10">
     }
 
     map<string, int> get_counts () {
@@ -451,9 +425,13 @@ class Simulator {
             qiskitPy += "qc.h("+qc.data[g][1]+")\n";
           } else if (qc.data[g][0]=="cx") {
             qiskitPy += "qc.cx("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+          } else if (qc.data[g][0]=="ch") {
+            qiskitPy += "qc.ch("+qc.data[g][1]+","+qc.data[g][2]+")\n";
+          } else if (qc.data[g][0]=="crx") {
+            qiskitPy += "qc.crx("+qc.data[g][1]+","+qc.data[g][2]+","+qc.data[g][3]+")\n";
           } else if (qc.data[g][0]=="m") {
             qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
-          }
+          } 
       }
 
       return qiskitPy;
