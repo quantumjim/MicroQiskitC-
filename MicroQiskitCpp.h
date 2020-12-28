@@ -13,8 +13,7 @@ https://github.com/qiskit-community/MicroQiskit
 #include <vector>
 #include <string>
 #include <complex>  
-#include <iostream>
-#include <bitset>
+//#include <bitset> //TODO remove this, no longer being used
 #include <ctime>
 #include <map>
 #define RESET   "\033[0m"
@@ -58,16 +57,22 @@ class QuantumCircuit {
     void add (QuantumCircuit qc2) {
 
       nBits = max(nBits,qc2.nBits);
-      
+      //i think this is missing:
+      nQubits = max(nQubits,qc2.nQubits);
+      //else we run the risk of adding a circuit that has gates making reference to a qubit that is out of range.
       for (int g=0; g<qc2.data.size(); g++){ 
         data.push_back( qc2.data[g] );
       }
       // TO DO: It is only possible to add circuits with equal nQubits in MicroQiskit, and qc2.nBits cannot be non-zero if qc.nBits is.
       // Abort and explain if the user provides other inputs.
+      //^ I don't understand this...
     }
 
     // TO DO: Add initialize function
     // do you mean this https://microqiskit.readthedocs.io/en/latest/micropython.html#microqiskit.QuantumCircuit.initialize ?
+    void initialize (){
+      //TODO
+    }
 
     void x (int q) {
       vector<string> gate;
@@ -227,7 +232,12 @@ class Simulator {
     //for each gate in qc.data vector (a vetor which is of the type vector<vector<string>>) there is an added vector<string>. Thus, qc.data.size() = the number of gates in qc.
     for (int g=0; g<qc.data.size(); g++){
 
-      if ( (qc.data[g][0]=="x") or (qc.data[g][0]=="rx") or (qc.data[g][0]=="h") ) {
+      if ( (qc.data[g][0]=="init") ){
+        // initialize
+        for(int i=0; i<qc.data[g][1].size(); i++){
+          //do something with the members of the passed list?
+        }
+      } else if ( (qc.data[g][0]=="x") or (qc.data[g][0]=="rx") or (qc.data[g][0]=="h") ) {
 
         int q;
         q = stoi( qc.data[g][qc.data[g].size()-1] );
