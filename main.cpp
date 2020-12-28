@@ -18,9 +18,11 @@ int main () {
   // if using constructor: QuantumCircuit qc0 (2,2); and no need to set_registers()
   qc0.set_registers(2,2);  
   // add the gates
-  // qc0.h(1);
-  qc0.x(0);
-  qc0.cx(1,0);
+  qc0.h(0);
+  qc0.x(1);
+  qc0.ch(1,0);
+  // qc0.x(0);
+  // qc0.cx(1,0);
   // qc0.cx(0,1);
   qc0.measure(0,0);
   qc0.measure(1,1);

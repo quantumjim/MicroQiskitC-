@@ -100,17 +100,17 @@ class QuantumCircuit {
       gate.push_back(to_string(t));
       data.push_back(gate);
     }
-    //TODO add new ch gate
+    //new ch gate
     void ch (int s, int t) { 
       vector<string> gate;
       verify_qubit_range(s,"ch gate");
       verify_qubit_range(t,"ch gate");
-      gate.push_back("cx");
+      gate.push_back("ch");
       gate.push_back(to_string(s));
       gate.push_back(to_string(t));
       data.push_back(gate);
     }
-    //TODO add crx gate
+    //new crx gate
     void crx (double theta, int s, int t) { 
       vector<string> gate;
       verify_qubit_range(s,"crx gate");
@@ -231,22 +231,21 @@ class Simulator {
 
         int q;
         q = stoi( qc.data[g][qc.data[g].size()-1] );
-        //retrieve the last qubit number from the gate vector (target), e.g. <"h","0"> = 0
+        //retrieve the last qubit number from the gate vector (target) as an int, e.g. <"h","0"> = 0
 
         for (int i0=0; i0<pow(2,q); i0++){
           for (int i1=0; i1<pow(2,qc.nQubits-q-1); i1++){
             int b0,b1;
-            b0 = i0 + int(pow(2,q+1)) * i1;//0+2*0 /0+2*1
-            b1 = b0 + int(pow(2,q));//0+1 /2+1
+            b0 = i0 + int(pow(2,q+1)) * i1;
+            b1 = b0 + int(pow(2,q));
 
             vector<double> e0, e1;
-            e0 = ket[b0];//<1.0, 0.0> / <0.0, 0.0>
-            e1 = ket[b1];//<0.0, 0.0> / <0.0, 0.0>
+            e0 = ket[b0];
+            e1 = ket[b1];
 
             if (qc.data[g][0]=="x"){
-              ket[b0] = e1;//<0.0, 0.0> / <0.0, 0.0>
-              ket[b1] = e0;//<1.0, 0.0> / <0.0, 0.0>
-              //at this point ket: //< <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> > / < <0.0, 0.0> <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
+              ket[b0] = e1;
+              ket[b1] = e0;
             } else if (qc.data[g][0]=="rx"){
               double theta = stof( qc.data[g][1] );
               ket[b0][0] = e0[0]*cos(theta/2)+e1[1]*sin(theta/2);
@@ -306,8 +305,26 @@ class Simulator {
                 ket[b1] = e0;
               } else if (qc.data[g][0]=="ch"){
                 //TODO
+                for (int k=0; k<2; k++){
+                  cout<<"k: "<<k<<endl;
+                  cout<<"b0: "<<b0<<endl;
+                  cout<<"b1: "<<b1<<endl;
+                  ket[b0][k] = (e0[k] + e1[k])/sqrt(2);
+                  cout<<"e0[k] + e1[k]/sqrt(2): "<<(e0[k] + e1[k])/sqrt(2)<<endl;
+                  ket[b1][k] = (e0[k] - e1[k])/sqrt(2);
+                  cout<<"e0[k] - e1[k]/sqrt(2): "<<(e0[k] - e1[k])/sqrt(2)<<endl;
+                  // cout<<"ket[0][0]: "<<ket[0][0]<<endl;
+                  // cout<<"ket[1][0]: "<<ket[1][0]<<endl;
+                  // cout<<"ket[2][0]: "<<ket[2][0]<<endl;
+                  // cout<<"ket[3][0]: "<<ket[3][0]<<endl;
+                }
               } else if (qc.data[g][0]=="crx"){
                 //TODO
+                double theta = stof( qc.data[g][1] );
+                ket[b0][0] = e0[0]*cos(theta/2)+e1[1]*sin(theta/2);
+                ket[b0][1] = e0[1]*cos(theta/2)-e1[0]*sin(theta/2);
+                ket[b1][0] = e1[0]*cos(theta/2)+e0[1]*sin(theta/2);
+                ket[b1][1] = e1[1]*cos(theta/2)-e0[0]*sin(theta/2);
               }
               
             }
