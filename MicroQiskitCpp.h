@@ -13,23 +13,19 @@ https://github.com/qiskit-community/MicroQiskit
 #include <vector>
 #include <string>
 #include <complex>  
-//#include <bitset> //TODO remove this, no longer being used
 #include <ctime>
 #include <map>
 #define RESET   "\033[0m"
 #define RED     "\033[31m"      /* Red */
-#define ERROR(MESSAGE) my_error_handler(__FILE__, __LINE__, MESSAGE)
+#define ERROR(MESSAGE) error_handler(MESSAGE)
 
 using namespace std;
 
-void my_error_handler(const char* file, int line, const string message) 
+void error_handler(const string message) 
 {
   cout << RED << message << RESET << endl;
-  //cout << RED << "Please review: "<< file << " line: " << line << RESET << endl;
   abort();
-} // TO DO: maybe __FILE__ and __LINE__ won't be very useful, as it is pointing to the line here in the header. consider removing it and making it just simply print the error message.
-
-// const int N_QUBITS_MAX = 20; //TODO remove this
+} 
 
 class QuantumCircuit {
 
