@@ -24,6 +24,7 @@ int main () {
   // qc0.x(0);
   // qc0.cx(1,0);
   // qc0.cx(0,1);
+  qc0.initialize({0.0,1.0,0.0,0.0});
   qc0.measure(0,0);
   qc0.measure(1,1);
   //at this point the data vector looks like: < <"h","0"> <"m","0","0"> <"m","1","1"> >

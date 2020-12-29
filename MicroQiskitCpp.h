@@ -68,12 +68,21 @@ class QuantumCircuit {
       //^ I don't understand this...
     }
 
-    // TO DO: Add initialize function
-    // do you mean this https://microqiskit.readthedocs.io/en/latest/micropython.html#microqiskit.QuantumCircuit.initialize ?
-    void initialize (){
-      //TODO
+    void initialize (vector<double> p){
+      vector<string> init;
+      //verify if the size of double vector is correct
+      int t = pow(2, nQubits);
+      if( !(p.size()==t||p.size()==t*2) ){
+        ERROR("initialize: Can't initialize circuit. Please insert a vector {} with either "+to_string(t)+" or "+to_string(t*2)+" doubles");
+      }
+      data.clear();
+      init.push_back("init");
+      init.push_back(to_string(p.size()));
+      for(int i=0;i<p.size();i++){
+        init.push_back(to_string(p[i]));
+      }
+      data.push_back(init);
     }
-
     void x (int q) {
       vector<string> gate;
       verify_qubit_range(q,"x gate");
@@ -225,17 +234,25 @@ class Simulator {
         e.push_back(0.0);
       }
       ket.push_back(e); //add vector{0.0, 0.0}
-    }//for 2 qubits < <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
+    }//e.g. for 2 qubits < <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
     ket[0][0] = 1.0; //change the first number on the first vector in ket. this means that by default it will be measuring 0, because that's the first bitstr.
-    //< <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
+    //e.g. < <1.0, 0.0> <0.0, 0.0> <0.0, 0.0> <0.0, 0.0> >
 
     //for each gate in qc.data vector (a vetor which is of the type vector<vector<string>>) there is an added vector<string>. Thus, qc.data.size() = the number of gates in qc.
     for (int g=0; g<qc.data.size(); g++){
 
       if ( (qc.data[g][0]=="init") ){
         // initialize
-        for(int i=0; i<qc.data[g][1].size(); i++){
-          //do something with the members of the passed list?
+        int initsize = stoi(qc.data[g][1]);
+        for(int i=0; i<initsize; i++){
+          if(initsize==pow(2,qc.nQubits)){
+            //if just a simple list
+            ket[i][0] = stod(qc.data[g][2+i]);
+            ket[i][1] = 0.0;
+          } else {
+            //else it must be a complete list
+            ket[i/2][i%2] = stod(qc.data[g][2+i]);
+          }
         }
       } else if ( (qc.data[g][0]=="x") or (qc.data[g][0]=="rx") or (qc.data[g][0]=="h") ) {
 
@@ -441,7 +458,16 @@ class Simulator {
             qiskitPy += "qc.crx("+qc.data[g][1]+","+qc.data[g][2]+","+qc.data[g][3]+")\n";
           } else if (qc.data[g][0]=="m") {
             qiskitPy += "qc.measure("+qc.data[g][1]+","+qc.data[g][2]+")\n";
-          } 
+          } else if (qc.data[g][0]=="init") {
+            //TODO review to really conform with qiskit
+            qiskitPy += "qc.initialize({"+qc.data[g][2];
+
+            int initsize = stoi(qc.data[g][1]);
+            for(int i=0; i<initsize-1; i++){
+              qiskitPy += ","+qc.data[g][3+i];
+            }
+            qiskitPy += "})\n";
+          }
       }
 
       return qiskitPy;
