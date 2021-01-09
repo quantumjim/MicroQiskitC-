@@ -14,10 +14,22 @@ int main () {
 
   // cout<<"my own quick tests"<<endl;
   // // initialize a circuit with two qubits 
-  // QuantumCircuit qc0;
+  // vector<QuantumCircuit> circs;
+  // // QuantumCircuit qc0;
+  // for(int i=0;i<1;i++){
+  //   QuantumCircuit qc (2,2);
+  //   circs.push_back(qc);
+  // }
   // // if using constructor: QuantumCircuit qc0 (2,2); and no need to set_registers()
-  // qc0.set_registers(2,2);  
-  // // add the gates
+  // // qc0.set_registers(2,2);  
+  // circs[0].set_registers(2,2);  
+  // cout<<circs[0].nQubits<<endl;
+  // for(int i=0;i<1;i++){
+  //   QuantumCircuit qc (0);
+  //   circs[0]=qc;
+  // }
+  // cout<<circs[0].nQubits<<endl;
+  // add the gates
   // qc0.h(0);
   // // qc0.x(1);
   // // qc0.ch(1,0);

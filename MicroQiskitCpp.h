@@ -95,6 +95,7 @@ class QuantumCircuit {
       data.push_back(gate);
     }
     void h (int q) {
+      std::cout<<"hello from header"<<std::endl;
       vector<string> gate;
       verify_qubit_range(q,"h gate");
       gate.push_back("h");
@@ -421,11 +422,12 @@ class Simulator {
 
       map<string, int> counts;//similar to dictionary
       vector<string> memory = get_memory();
-
-      for (int s=0; s<shots; s++){
-        counts[memory[s]] += 1;//aggregate by key/bitstr
+      if(memory.size()>0){
+        for (int s=0; s<shots; s++){
+          counts[memory[s]] += 1;//aggregate by key/bitstr
+        }
       }
-
+      
       return counts;
     }
 
