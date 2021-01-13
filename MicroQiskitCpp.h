@@ -397,7 +397,7 @@ class Simulator {
 
         for (int j=0; j<probs.size();j++){
           cumu += probs[j];//this will add up to 1  
-          if ((r<cumu) && un){//TODO isn't there a chance that r will be 1.0?
+          if ((r<=cumu) && un){
             // string long_out = bitset<N_QUBITS_MAX>(j).to_string(); //
             // cout<<"long_out: "<<long_out<<endl;
             // string out = long_out.substr (N_QUBITS_MAX-qc.nQubits,N_QUBITS_MAX);
