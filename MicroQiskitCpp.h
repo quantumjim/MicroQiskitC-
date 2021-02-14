@@ -473,7 +473,42 @@ class Simulator {
 
     string get_qasm () {
       string qasm;
-      // TODO
+      // initial qasm header
+      qasm += "OPENQASM 2.0;\ninclude \"qelib1.inc\";\n";
+      // qreg
+      qasm += "qreg q["+to_string(qc.nQubits)+"];\n";
+      // creg
+      if (qc.nBits!=0){ // maybe don't do this and always print it
+        qasm += "creg c["+to_string(qc.nBits)+"];\n"; 
+      }
+      // gates
+      for (int g=0; g<qc.data.size(); g++){
+          if (qc.data[g][0]=="x"){
+            qasm += "x q["+qc.data[g][1]+"];\n";
+          } else if (qc.data[g][0]=="rx") {
+            qasm += "rx("+qc.data[g][1]+") q["+qc.data[g][2]+"];\n";
+          } else if (qc.data[g][0]=="h") {
+            qasm += "h q["+qc.data[g][1]+"];\n";
+          } else if (qc.data[g][0]=="cx") {
+            qasm += "cx q["+qc.data[g][1]+"],q["+qc.data[g][2]+"];\n";
+          } else if (qc.data[g][0]=="ch") {
+            qasm += "ch q["+qc.data[g][1]+"],q["+qc.data[g][2]+"];\n";
+          } else if (qc.data[g][0]=="crx") {
+            qasm += "crx("+qc.data[g][1]+") q["+qc.data[g][2]+"],q["+qc.data[g][3]+"];\n";
+          } else if (qc.data[g][0]=="m") {
+            qasm += "measure q["+qc.data[g][1]+"] -> c["+qc.data[g][2]+"];\n";
+          // I don't think qasm has this...
+          //} else if (qc.data[g][0]=="init") {
+            ////TODO review to really conform with qiskit
+            //qasm += "qc.initialize({"+qc.data[g][2];
+
+            //int initsize = stoi(qc.data[g][1]);
+            //for(int i=0; i<initsize-1; i++){
+              //qiskitPy += ","+qc.data[g][3+i];
+            //}
+            //qiskitPy += "})\n";
+          }
+      }
 
       return qasm;
     }

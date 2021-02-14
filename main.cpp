@@ -89,6 +89,8 @@ int main () {
   // we can use the result to see what the Qiskit syntax would be
   cout << "\nThis circuit could be expressed in Qiskit as:" << endl;
   cout << result.get_qiskit() << endl;
+  cout << "\nThis circuit could be expressed in Qasm as:" << endl;
+  cout << result.get_qasm() << endl;
 
   // and also to get the counts
   map<string, int> counts = result.get_counts();
