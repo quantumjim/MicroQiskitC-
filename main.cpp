@@ -1,16 +1,72 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include "MicroQiskitCpp.h"
+
+using namespace std;
 
 int main () {
 
-  cout << "\n===================================================================================" << endl;
-  cout << "This is MicroQiskitCpp: an extremely minimal version of Qiskit, implemented in C++." << endl;
-  cout << "\nFor the standard version of Qiskit, see qiskit.org. To run your quantum programs\non real quantum hardware, see quantum-computing.ibm.com." << endl;
-  cout << "===================================================================================\n" << endl;
+  // cout << "\n===================================================================================" << endl;
+  // cout << "This is MicroQiskitCpp: an extremely minimal version of Qiskit, implemented in C++." << endl;
+  // cout << "\nFor the standard version of Qiskit, see qiskit.org. To run your quantum programs\non real quantum hardware, see quantum-computing.ibm.com." << endl;
+  // cout << "===================================================================================\n" << endl;
+
+  // cout<<"my own quick tests"<<endl;
+  // // initialize a circuit with two qubits 
+  // vector<QuantumCircuit> circs;
+  // // QuantumCircuit qc0;
+  // for(int i=0;i<1;i++){
+  //   QuantumCircuit qc (2,2);
+  //   circs.push_back(qc);
+  // }
+  // // if using constructor: QuantumCircuit qc0 (2,2); and no need to set_registers()
+  // // qc0.set_registers(2,2);  
+  // circs[0].set_registers(2,2);  
+  // cout<<circs[0].nQubits<<endl;
+  // for(int i=0;i<1;i++){
+  //   QuantumCircuit qc (0);
+  //   circs[0]=qc;
+  // }
+  // cout<<circs[0].nQubits<<endl;
+  // add the gates
+  // qc0.h(0);
+  // // qc0.x(1);
+  // // qc0.ch(1,0);
+  // // qc0.x(0);
+  // // qc0.cx(1,0);
+  // // qc0.cx(0,1);
+  // qc0.initialize({0.0,0.0,sqrt(0.5),0.0,sqrt(0.5),0.0,0.0,0.0});
+  // qc0.measure(0,0);
+  // qc0.measure(1,1);
+  // //at this point the data vector looks like: < <"h","0"> <"m","0","0"> <"m","1","1"> >
+  // // simulate the circuit and get a result
+  // Simulator result0 (qc0, 10);
+  // // we can use the result to see what the Qiskit syntax would be
+  // cout << "\nThis circuit could be expressed in Qiskit as:" << endl;
+  // cout << result0.get_qiskit() << endl;
+  // // and also to get the counts
+  // map<string, int> counts0 = result0.get_counts();
+  // // let's print this to screen
+  // cout << "The counts are:" << endl;
+  // for(map<string, int>::iterator iter = counts0.begin(); iter != counts0.end(); ++iter){
+  //   string bitstring = iter->first;
+  //   int count = iter->second;
+  //   cout << "Counts for "+bitstring+" = " << count << "\n";
+  // }
+
+  // // and also get the statevector
+  // vector<complex<double>> ket0 = result0.get_statevector();
+
+  // // let's print this to screen
+  // cout << "\nThe statevector is:" << endl;
+  // for (int j=0; j<ket0.size(); j++){
+  //   cout << "(" << real(ket0[j]) << ") + (" << imag(ket0[j]) << ")" <<  "*i" << endl;
+  // }
 
   cout << "\n**We start with a Bell pair: the standard 'Hello World' of quantum computing.**" << endl;
 
-  // initialize a circuit with two qubits
+  // initialize a circuit with two qubits 
   QuantumCircuit qc;
   qc.set_registers(2);  
   // add the gates to create a Bell pair
@@ -33,15 +89,17 @@ int main () {
   // we can use the result to see what the Qiskit syntax would be
   cout << "\nThis circuit could be expressed in Qiskit as:" << endl;
   cout << result.get_qiskit() << endl;
+  cout << "\nThis circuit could be expressed in Qasm as:" << endl;
+  cout << result.get_qasm() << endl;
 
   // and also to get the counts
-  std::map<string, int> counts = result.get_counts();
+  map<string, int> counts = result.get_counts();
 
   // let's print this to screen
   cout << "The counts are:" << endl;
-  for(std::map<string, int>::iterator iter = counts.begin(); iter != counts.end(); ++iter){
+  for(map<string, int>::iterator iter = counts.begin(); iter != counts.end(); ++iter){
 
-    std::string bitstring = iter->first;
+    string bitstring = iter->first;
     int count = iter->second;
   
     cout << "Counts for "+bitstring+" = " << count << "\n";
@@ -70,7 +128,7 @@ int main () {
   cout << "Note: It could also be expressed more efficiently in Qiskit, but MicroQiskit compiles everything down to x, rx, h and cx." << endl;
 
   // and also get the statevector
-  vector<std::complex<double>> ket = result2.get_statevector();
+  vector<complex<double>> ket = result2.get_statevector();
 
   // let's print this to screen
   cout << "\nThe statevector is:" << endl;
